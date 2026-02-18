@@ -86,7 +86,7 @@
 
         "default" : {
             "both_branch"   : "main",
-            "win_adj"       : "movecount=5 score=600",
+            "win_adj"       : "movecount=5 score=2000",
             "draw_adj"      : "movenumber=32 movecount=6 score=15",
             "workload_size" : 128,
             "datagen_max_games" : 10000000,

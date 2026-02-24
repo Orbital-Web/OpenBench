@@ -29,6 +29,8 @@
 
     "engines" : [
         "Raphael",
-        "Stash"
+        "Stash",
+        "Prune",
+        "Stormphrax.json"
     ]
 }

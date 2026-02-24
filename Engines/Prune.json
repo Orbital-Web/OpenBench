@@ -4,7 +4,7 @@
     "source"  : "https://github.com/tgirolami09/Prune",
 
     "build" : {
-        "path"      : "src",
+        "path"      : "core",
         "compilers" : ["g++"],
         "cpuflags"  : [],
         "systems"   : ["Windows", "Linux"]

@@ -1,7 +1,7 @@
 
 a:link, a:visited, a:hover, a:active {
+    color: #B2AFFF;
     text-decoration: none;
-    color: #8BBAD6;
 }
 
 body {
@@ -11,26 +11,26 @@ body {
 
     --color-font1: #DBDEE1;
     --color-font2: #949BA4;
-    --color-font3: #008F11;
+    --color-font3: #A78EFF;
+    display:flex;
 
     background-color: var(--color1);
 
     font-size: 16px;
     font-family: "Courier Prime", serif;
-    display:flex;
 }
 
 body, html, main{
-    padding: 0;
     margin: 0;
+    padding: 0;
     min-width: 100%;
     max-width: 100%;
     white-space: nowrap;
 }
 
 #sidebar {
-    padding: 60px 16px 16px 16px;
     flex-basis: calc(min(300px, max(200px, 10%)));
+    padding: 60px 16px 16px 16px;
 }
 
 #sidebar-toggle {
@@ -40,37 +40,37 @@ body, html, main{
 #content-parent{
     flex-grow: 1;
     justify-content: left;
-    height: 100%;
 
     box-sizing: border-box;
-    padding-left: 2rem;
     padding-right: 2rem;
+    padding-left: 2rem;
+    height: 100%;
 }
 
 #content {
-    max-width: calc(min(100%,1000px));
-    width: 100%;
-    white-space: nowrap;
     display: inline-block;
+    width: 100%;
+    max-width: calc(min(100%,1000px));
+    white-space: nowrap;
 }
 
 #sidebar ul {
-    list-style-type: none;
     padding: 0px 16px 0px 8px;
     line-height: 1.75;
+    list-style-type: none;
 }
 
 #sidebar li {
+    transition: background-color 0.2s ease-in-out;
+    border-radius: 4px;
     padding: 4px 16px 2px;
     font-size: 1.0rem;
-    border-radius: 4px;
-    transition: background-color 0.2s ease-in-out;
 }
 
 #sidebar li a {
-    color: var(--color-font2);
     display: block;
     width: 100%;
+    color: var(--color-font2);
 }
 
 #sidebar li:hover {
@@ -78,9 +78,9 @@ body, html, main{
 }
 
 #sidebar .header {
+    pointer-events: none;
     color: var(--color-font3);
     font-size: 1.1rem;
-    pointer-events: none;
 }
 
 #sidebar hr {
@@ -140,15 +140,15 @@ body, html, main{
 }
 
 #content .table-header th {
+    background-color: #171717;
     color: var(--color-font3);
     font-weight: 400;
-    background-color: #171717;
 }
 
 #content .table-small-header th {
+    background-color: #171717;
     color: var(--color-font3);
     font-size: small;
-    background-color: #171717;
 }
 
 /* Table Spacer for chaining Tables as a hack */
@@ -160,20 +160,20 @@ body, html, main{
 
 #content .table-spacer-small th, #content .table-spacer-small tr {
     background-color: #171717;
-    height: 0.4rem;
     padding: 0px;
+    height: 0.4rem;
 }
 
 /* Generic Table CSS for all Tables */
 
 #content table {
-    line-height: 96%;
     border-collapse: collapse;
+    line-height: 96%;
 }
 
 #content td {
-    color: var(--color-font2);
     border-bottom: 1px #444444 solid;
+    color: var(--color-font2);
 }
 
 #content th, #content td {
@@ -195,29 +195,29 @@ body, html, main{
 }
 
 #content .anchorbutton {
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border-color: transparent;
     border-radius: 4px;
     padding: 8px 0px 6px;
-    border-color: transparent;
     color: var(--color-font1);
-    display: inline-block;
-    text-align: center;
-    transition: background-color 0.3s ease;
-    font-family: "Courier Prime", serif;
     font-size: 13px;
-    cursor: pointer;
+    font-family: "Courier Prime", serif;
+    text-align: center;
 }
 
 #content .btn-blue {
-    background-color: #1C2D40;
+    background-color: #3B2A6D;
 }
 
 #content .btn-start {
-    background-color: #384A5F;
+    background-color: #3B2A6D;
     width: 100%;
 }
 
 #content .btn-preset {
-    background-color: #046c52;
+    background-color: #963090;
 }
 
 #content .btn-yellow {
@@ -225,7 +225,7 @@ body, html, main{
 }
 
 #content .btn-red {
-    background-color: #74261E;
+    background-color: #651E3E;
 }
 
 #content .btn-disabled {
@@ -253,48 +253,52 @@ body, html, main{
 }
 
 #content .btn-disabled:hover {
-    background-color: var(--color3);
-    cursor: not-allowed;
     transform: none;
+    cursor: not-allowed;
+    background-color: var(--color3);
 }
 
 #content .copy-button {
-    color: var(--color-font2);
     transition: color 0.2s ease-in-out;
+    color: var(--color-font2);
 
 }
 
 #content .copy-button:hover {
-    color: var(--color-font3);
     cursor: pointer;
+    color: var(--color-font3);
 }
 
 /* Short StatBlock to show SPRT and Test Results */
 
 #content .statblock {
-    font-size: 13px;
-    color: black;
-    line-height: 92%;
-    background-color: #CCCCCC;
-    font-family: "Courier New";
     border-radius: 4px;
+    background-color: #999;
     padding: 7px 10px 4px;
+    color: black;
+    font-size: 13px;
+    line-height: 92%;
+    font-family: "Courier New";
 }
 
 #content .statblock-green {
-    background-color: #76D576;
+    background-color: #8766FF;
+    color: #ddd;
 }
 
 #content .statblock-blue {
-    background-color: #60F0FF;
+    background-color: #63A6FF;
+    color: #ddd;
 }
 
 #content .statblock-yellow {
-    background-color: #EFF891;
+    background-color: #CD7267;
+    color: #ddd;
 }
 
 #content .statblock-red {
-    background-color: #FA9696;
+    background-color: #FF295C;
+    color: #ddd;
 }
 
 #content .redlink {
@@ -304,10 +308,10 @@ body, html, main{
 /* Long StatBlock which we can copy */
 
 #content .long-statblock {
-    background-color: var(--color3);
-    color: var(--color-font2);
     border-radius: 4px;
+    background-color: var(--color3);
     padding: 0.50rem 0.75rem;
+    color: var(--color-font2);
 }
 
 /* Test Views */
@@ -357,18 +361,18 @@ td pre {
 }
 
 #content .default-network {
-    color: var(--color-font3);
     transform: scale(1.10);
+    color: var(--color-font3);
 }
 
 #content .was-default-network {
-    color: #EFF891;
     transform: scale(0.90);
+    color: #EFF891;
 }
 
 #content .non-default-network {
-    color: var(--color-font1);
     transform: scale(0.70);
+    color: var(--color-font1);
 }
 
 
@@ -387,15 +391,15 @@ td pre {
 /* Styles for screen widths less than 768px */
 @media (max-width: 767px) {
     #sidebar {
-        flex-basis: 100%;
         position: fixed;
         top: 0;
         bottom: 0;
-        width: 100%;
-        background-color: var(--color1);
-        overflow-y: auto;
-        transition: transform cubic-bezier(0.82, 0.08, 0.1, 0.93) 0.3s;
+        flex-basis: 100%;
         transform: translateX(-100%);
+        transition: transform cubic-bezier(0.82, 0.08, 0.1, 0.93) 0.3s;
+        background-color: var(--color1);
+        width: 100%;
+        overflow-y: auto;
     }
 
     body.sidebar-open #sidebar {
@@ -404,41 +408,41 @@ td pre {
 
     #sidebar-toggle {
         display: flex;
-        padding: 10px;
-        color: var(--color-font1);
-        background-color: transparent;
-        border: none;
         position: relative;
         z-index: 10;
+        border: none;
+        background-color: transparent;
+        padding: 10px;
+        color: var(--color-font1);
         font-size: 2.2rem;
     }
 
     #content-parent {
-        height: auto;
         flex-grow: 0;
         flex-basis: 100%;
         padding: 0 8px;
+        height: auto;
     }
 
     #content {
-        overflow-x: hidden;
         margin-top: 70px;
+        overflow-x: hidden;
     }
 
     #content-header {
         display: flex;
-        align-items: center;
-        background-color: var(--color1);
         position: absolute;
         top: 0;
         left: 0;
+        align-items: center;
         z-index: 10;
+        background-color: var(--color1);
     }
 
     #content-header h2 {
+        margin: 8px 0;
         /* Adjust the font size to the screen width, ensuring that the title doesn't overflow */
         font-size: clamp(1.0rem, 4.8vw, 1.4rem);
-        margin: 8px 0;
     }
 
     #content-header .site-title {
@@ -501,9 +505,9 @@ td pre {
 #content .engine-options-popup {
     display: none;
     position: absolute;
-    padding: 8px 12px;
-    background-color: #000;
     border: 1px solid #ccc;
     border-radius: 8px;
+    background-color: #000;
+    padding: 8px 12px;
 }
 

@@ -233,15 +233,15 @@ body, html, main{
 }
 
 #content .btn-blue:hover {
-    background-color: #2E3F57;
+    background-color: #584397;
 }
 
 #content .btn-start:hover {
-    background-color: #2E3F57;
+    background-color: #584397;
 }
 
 #content .btn-preset:hover {
-    background-color: #11a983;
+    background-color: #c14bb9;
 }
 
 #content .btn-yellow:hover {
@@ -249,7 +249,7 @@ body, html, main{
 }
 
 #content .btn-red:hover {
-    background-color: #8E3D28;
+    background-color: #882f58;
 }
 
 #content .btn-disabled:hover {
@@ -292,7 +292,7 @@ body, html, main{
 }
 
 #content .statblock-yellow {
-    background-color: #CD7267;
+    background-color: #FE8C4A;
     color: #ddd;
 }
 
@@ -302,7 +302,7 @@ body, html, main{
 }
 
 #content .redlink {
-    color: #FF4D4D;
+    color: #FF295C;
 }
 
 /* Long StatBlock which we can copy */
@@ -345,15 +345,15 @@ td pre {
 }
 
 #content .error-message {
-    color: red;
+    color: #FF295C;
 }
 
 #content .warning-message {
-    color: yellow;
+    color: #FE8C4A;
 }
 
 #content .status-message {
-    color: green;
+    color: #8766FF;
 }
 
 #content .site-title {

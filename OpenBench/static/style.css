@@ -283,22 +283,22 @@ body, html, main{
 
 #content .statblock-green {
     background-color: #8766FF;
-    color: #ddd;
+    color: #222;
 }
 
 #content .statblock-blue {
     background-color: #63A6FF;
-    color: #ddd;
+    color: #222;
 }
 
 #content .statblock-yellow {
     background-color: #FE8C4A;
-    color: #ddd;
+    color: #222;
 }
 
 #content .statblock-red {
     background-color: #FF295C;
-    color: #ddd;
+    color: #222;
 }
 
 #content .redlink {

@@ -43,6 +43,8 @@ from OpenBench.models import *
 from OpenBench.stats import PentanomialSPRT, TrinomialSPRT
 from OpenSite.settings import MEDIA_ROOT, PROJECT_PATH
 
+LLR_HISTORY_SIZE = 120
+
 
 class TimeControl(object):
 
@@ -172,7 +174,7 @@ def load_llr_history(test):
         return [[0, 0.0]]
 
 
-def interpolate_llr_history(history, max_points=120):
+def interpolate_llr_history(history, max_points=LLR_HISTORY_SIZE):
     if not history:
         return []
 
@@ -229,7 +231,7 @@ def interpolate_llr_history(history, max_points=120):
     return [merged[key] for key in sorted(merged.keys())]
 
 
-def get_llr_history(test, max_points=120):
+def get_llr_history(test, max_points=LLR_HISTORY_SIZE):
     return interpolate_llr_history(load_llr_history(test), max_points=max_points)
 
 
@@ -685,6 +687,18 @@ def update_test(request, machine):
     return [{}, {"stop": True}][test.finished]
 
 
+def downsample_history(history, target_size=LLR_HISTORY_SIZE):
+    N = len(history)
+    if N <= target_size:
+        return history
+
+    downsampled = []
+    for i in range(target_size):
+        idx = int(round(i * (N - 1) / float(target_size - 1)))
+        downsampled.append(history[idx])
+    return downsampled
+
+
 def record_llr_history(test):
     history = load_llr_history(test)
     point = [test.games, round(test.currentllr, 4)]
@@ -696,6 +710,9 @@ def record_llr_history(test):
 
     if not history or history[0][0] != 0:
         history.insert(0, [0, 0.0])
+
+    if len(history) >= LLR_HISTORY_SIZE * 2:
+        history = downsample_history(history, LLR_HISTORY_SIZE)
 
     path = llr_history_path(test.id)
     os.makedirs(os.path.dirname(path), exist_ok=True)

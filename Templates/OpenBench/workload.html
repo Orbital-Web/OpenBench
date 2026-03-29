@@ -11,7 +11,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             populate_results({{results|safe}});
 
-            document.querySelectorAll('.llr-history-widget').forEach(function(widget) {
+            var llrHistoryRequest = null;
+
+            function initializeLlrHistoryWidget(widget) {
+                if (!widget || widget.dataset.initialized === 'true') return;
+
+                widget.dataset.initialized = 'true';
+
                 var history = JSON.parse(widget.dataset.history || '[]');
                 if (!history.length) return;
                 var realPoints = history.filter(function(point) { return !point.estimated; });
@@ -108,7 +114,79 @@
                 });
 
                 clearActivePoint();
-            });
+            }
+
+            function initializeLlrHistoryWidgets(root) {
+                (root || document).querySelectorAll('.llr-history-widget').forEach(function(widget) {
+                    initializeLlrHistoryWidget(widget);
+                });
+            }
+
+            function ensureLlrHistoryWidget() {
+                var existing = document.querySelector('.llr-history-widget');
+                if (existing) {
+                    initializeLlrHistoryWidget(existing);
+                    return Promise.resolve(existing);
+                }
+
+                var container = document.getElementById('llr-history-container');
+                if (!container || !container.dataset.historyUrl) {
+                    return Promise.resolve(null);
+                }
+
+                if (llrHistoryRequest) {
+                    return llrHistoryRequest;
+                }
+
+                llrHistoryRequest = fetch(container.dataset.historyUrl, {
+                    credentials: 'same-origin'
+                }).then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Unable to load history graph');
+                    }
+
+                    return response.text();
+                }).then(function(markup) {
+                    container.innerHTML = markup;
+                    container.removeAttribute('data-history-url');
+
+                    var widget = container.querySelector('.llr-history-widget');
+                    initializeLlrHistoryWidget(widget);
+                    llrHistoryRequest = null;
+                    return widget;
+                }).catch(function() {
+                    container.innerHTML = '<div class="llr-history-placeholder llr-history-placeholder-error">Unable to load history graph.</div>';
+                    llrHistoryRequest = null;
+                    return null;
+                });
+
+                return llrHistoryRequest;
+            }
+
+            function queueLlrHistoryWidgetLoad() {
+                var container = document.getElementById('llr-history-container');
+                if (!container || !container.dataset.historyUrl) return;
+
+                function requestGraphAfterPaint() {
+                    window.requestAnimationFrame(function() {
+                        window.requestAnimationFrame(function() {
+                            setTimeout(function() {
+                                ensureLlrHistoryWidget();
+                            }, 250);
+                        });
+                    });
+                }
+
+                if (document.readyState === 'complete') {
+                    requestGraphAfterPaint();
+                    return;
+                }
+
+                window.addEventListener('load', requestGraphAfterPaint, { once: true });
+            }
+
+            initializeLlrHistoryWidgets(document);
+            queueLlrHistoryWidgetLoad();
         });
     </script>
 
@@ -297,7 +375,25 @@
         {% if workload.test_mode == "SPRT" %}
             <div class="llr-history-panel" title="LLR history over the lifetime of the test">
                 <div class="llr-history-label">LLR History</div>
-                {{workload|llr_history_graph}}
+                <div id="llr-history-container" class="llr-history-loader" data-history-url="{{llr_history_endpoint}}">
+                    <div class="llr-history-chart">
+                        <div class="llr-history-yaxis">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <div class="llr-history-main">
+                            <div class="llr-history-plot">
+                                <div class="llr-history-placeholder">Loading history graph...</div>
+                            </div>
+                            <div class="llr-history-xaxis">
+                                <div>0</div>
+                                <div></div>
+                                <div>{{workload.games}} g</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         {% endif %}
     </div>

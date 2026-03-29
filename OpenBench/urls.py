@@ -18,7 +18,9 @@
 #                                                                             #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-import django.urls, OpenBench.views
+import django.urls
+
+import OpenBench.views
 
 urlpatterns = [
 
@@ -79,6 +81,7 @@ urlpatterns = [
     django.urls.path(r'api/networks/<str:engine>/<str:identifier>/delete/', OpenBench.views.api_network_delete),
     django.urls.path(r'api/buildinfo/', OpenBench.views.api_build_info),
     django.urls.path(r'api/pgns/<int:pgn_id>/', OpenBench.views.api_pgns),
+    django.urls.path(r'api/test/<int:id>/llr-history/', OpenBench.views.test_llr_history),
     django.urls.path(r'api/spsa/<int:workload_id>/', OpenBench.views.api_spsa),
     django.urls.path(r'api/workload/<int:workload_id>/results/', OpenBench.views.api_workload_results),
 

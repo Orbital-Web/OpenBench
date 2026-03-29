@@ -320,6 +320,10 @@ body, html, main{
     margin: 0.5rem 0 0.75rem;
 }
 
+#content .llr-history-loader {
+    width: 372px;
+}
+
 #content .llr-history-widget {
     position: relative;
     z-index: 0;
@@ -352,6 +356,24 @@ body, html, main{
 #content .llr-history-plot {
     position: relative;
     z-index: 0;
+}
+
+#content .llr-history-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #4C566A;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #242933 0%, #2C3440 100%);
+    width: 320px;
+    height: 112px;
+    color: #A7B1C2;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+}
+
+#content .llr-history-placeholder-error {
+    color: #E07A7A;
 }
 
 #content .llr-history-label {

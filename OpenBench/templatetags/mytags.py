@@ -269,7 +269,6 @@ def machine_name(machine_id):
 
 
 def llr_history_graph(test, width=320, height=112):
-
     if test.test_mode != "SPRT":
         return ""
 

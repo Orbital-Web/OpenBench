@@ -34,31 +34,33 @@ from django.utils import timezone
 import OpenBench.views
 from OpenBench.models import *
 
+
 def view_workload(request, workload, workload_type):
 
-    assert workload_type in [ 'TEST', 'TUNE', 'DATAGEN' ]
+    assert workload_type in ["TEST", "TUNE", "DATAGEN"]
 
     truncated, results = fetch_results(workload, force=False)
 
     data = {
-        'workload'          : workload,
-        'results'           : json.dumps(results),
-        'results_truncated' : truncated
+        "workload": workload,
+        "results": json.dumps(results),
+        "results_truncated": truncated,
     }
 
-    if workload_type == 'TEST':
-        data['type']= workload_type
-        data['dev_text'] = 'Dev'
+    if workload_type == "TEST":
+        data["type"] = workload_type
+        data["dev_text"] = "Dev"
 
-    if workload_type == 'TUNE':
-        data['type'] = workload_type
-        data['dev_text'] = ''
+    if workload_type == "TUNE":
+        data["type"] = workload_type
+        data["dev_text"] = ""
 
-    if workload_type == 'DATAGEN':
-        data['type'] = workload_type
-        data['dev_text'] = 'Dev'
+    if workload_type == "DATAGEN":
+        data["type"] = workload_type
+        data["dev_text"] = "Dev"
 
-    return OpenBench.views.render(request, 'workload.html', data)
+    return OpenBench.views.render(request, "workload.html", data)
+
 
 def fetch_results(workload, force):
 
@@ -73,28 +75,27 @@ def fetch_results(workload, force):
     target = target - datetime.timedelta(minutes=1)
 
     # Create `active` field for current machines
-    qs = qs.select_related('machine__user').annotate(
+    qs = qs.select_related("machine__user").annotate(
         active=ExpressionWrapper(
-            Q(machine__updated__gte=target) &
-            Q(test_id=F('machine__workload')),
-            output_field=BooleanField()
+            Q(machine__updated__gte=target) & Q(test_id=F("machine__workload")),
+            output_field=BooleanField(),
         )
     )
 
     # Only the fields consumed by the template OpenBench/workload.html
     qs = qs.values(
-        'machine__id',
-        'machine__user__username',
-        'updated',
-        'games',
-        'wins',
-        'losses',
-        'draws',
-        'timeloss',
-        'crashes',
-        'active',
+        "machine__id",
+        "machine__user__username",
+        "updated",
+        "games",
+        "wins",
+        "losses",
+        "draws",
+        "timeloss",
+        "crashes",
+        "active",
     )
 
-    results = [{ **result, 'updated' : result['updated'].timestamp() } for result in qs]
+    results = [{**result, "updated": result["updated"].timestamp()} for result in qs]
 
     return False, results

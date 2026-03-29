@@ -1,31 +1,27 @@
-{% extends "OpenBench/base.html" %}
+{% extends "OpenBench/base.html" %} {% load mytags %} {% block content %}
 
-{% load mytags %}
+<table class="hoverable">
+    <tr class="table-header">
+        <th>Date</th>
+        <th>User</th>
+        <th>Test</th>
+        <th>TC</th>
+        <th>Summary</th>
+    </tr>
 
-{% block content %}
+    {% for event in events %}
+    <tr>
+        <td class="timestamp">{{event.created|date:'U'}}</td>
+        <td>{{event.author|capfirst}}</td>
+        <td>
+            <a href="{{event.test_id|workload_url}}"
+                >{{event.test_id|testIdToPrettyName}}</a
+            >
+        </td>
+        <td>{{event.test_id|testIdToTimeControl}}</td>
+        <td>{{event.summary}}</td>
+    </tr>
+    {% endfor %}
+</table>
 
-    <table class="hoverable">
-
-        <tr class="table-header">
-            <th>Date</th>
-            <th>User</th>
-            <th>Test</th>
-            <th>TC</th>
-            <th>Summary</th>
-        </tr>
-
-        {% for event in events %}
-            <tr>
-                <td class="timestamp">{{event.created|date:'U'}}</td>
-                <td>{{event.author|capfirst}}</td>
-                <td><a href="{{event.test_id|workload_url}}">{{event.test_id|testIdToPrettyName}}</a></td>
-                <td>{{event.test_id|testIdToTimeControl}}</td>
-                <td>{{event.summary}}</td>
-            </tr>
-        {% endfor %}
-
-    <table>
-
-    {% include "OpenBench/Blocks/pagebrowser.html" %}
-
-{% endblock %}
+{% include "OpenBench/Blocks/pagebrowser.html" %} {% endblock %}

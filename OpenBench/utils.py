@@ -692,10 +692,28 @@ def downsample_history(history, target_size=LLR_HISTORY_SIZE):
     if N <= target_size:
         return history
 
+    xs = [x for x, _ in history]
+    xmin = xs[0]
+    xmax = xs[-1]
+    step = (xmax - xmin) / float(target_size - 1)
+
     downsampled = []
+    j = 0
     for i in range(target_size):
-        idx = int(round(i * (N - 1) / float(target_size - 1)))
-        downsampled.append(history[idx])
+        target_x = xmin + i * step
+
+        while j < N - 1 and xs[j] < target_x:
+            j += 1
+
+        if j == 0:
+            downsampled.append(history[j])
+        else:
+            prev = xs[j - 1]
+            curr = xs[j]
+            if abs(prev - target_x) <= abs(curr - target_x):
+                downsampled.append(history[j - 1])
+            else:
+                downsampled.append(history[j])
     return downsampled
 
 

@@ -31,6 +31,7 @@
     "engines" : [
         "Raphael",
         "Stash",
+        "PlentyChess",
         "Prune",
         "PZChessBot",
         "Stormphrax",

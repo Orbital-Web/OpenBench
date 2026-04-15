@@ -20,6 +20,7 @@
 
 import html
 import json
+import math
 import re
 
 import django
@@ -162,6 +163,40 @@ def longStatBlock(test):
         lines.append("Penta | [%d, %d, %d, %d, %d]" % test.as_penta())
 
     return "\n".join(lines)
+
+
+def passRateStatBlock(test):
+
+    assert test.test_mode == "SPRT"
+
+    pairs = test.games // 2
+    draw_ratio = test.DD / pairs if pairs else 0.49
+    rms_bias = 191
+    rms_bias_score = 1 / (1 + math.pow(10, -rms_bias / 400))
+    variance = 1 - draw_ratio - 4 * math.pow(rms_bias_score - 0.5, 2)
+
+    C = 800 / math.log(10)
+    t_lower = test.elolower / C
+    t_upper = test.eloupper / C
+    _, elo, _ = OpenBench.stats.Elo(test.results())
+    t_curr = elo / (C * math.sqrt(variance))
+
+    b = math.log((1 - test.beta) / test.alpha)
+    h = (2 * t_curr - t_upper - t_lower) / (t_upper - t_lower)
+
+    expected_games = (
+        2
+        * b
+        / (h * math.pow(t_upper - t_lower, 2))
+        * (1 - math.exp(-b * h))
+        / (1 + math.exp(-b * h))
+    ) / 1000
+    expected_pass_rate = 100 / (1 + math.exp(-b * h))
+
+    return (
+        f"Expected No. Games: {expected_games:.2f}k\n"
+        + f"Expected Pass Rate: {expected_pass_rate:.2f}%"
+    )
 
 
 def testResultColour(test):
@@ -474,6 +509,7 @@ register.filter("twoDigitPrecision", twoDigitPrecision)
 register.filter("gitDiffLink", gitDiffLink)
 register.filter("shortStatBlock", shortStatBlock)
 register.filter("longStatBlock", longStatBlock)
+register.filter("passRateStatBlock", passRateStatBlock)
 register.filter("testResultColour", testResultColour)
 register.filter("sumAttributes", sumAttributes)
 register.filter("insertCommas", insertCommas)

@@ -55,6 +55,7 @@ def view_workload(request, workload, workload_type):
     if workload_type == "TUNE":
         data["type"] = workload_type
         data["dev_text"] = ""
+        data["spsa_history_endpoint"] = "/api/spsa/%d/spsa-history/" % (workload.id)
 
     if workload_type == "DATAGEN":
         data["type"] = workload_type

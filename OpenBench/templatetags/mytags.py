@@ -505,6 +505,146 @@ def llr_history_graph(test, width=320, height=112):
     return mark_safe(svg)
 
 
+def spsa_history_graph(test, width=320, height=300):
+    if test.test_mode != "SPSA":
+        return ""
+
+    history = OpenBench.utils.get_spsa_history(test)
+    if not history:
+        return ""
+
+    all_points = [pt for series in history.values() for pt in series if series]
+    if not all_points:
+        return ""
+
+    x_max = max(max(pt[0] for pt in all_points), 1)
+
+    scaled = {
+        name: [[g, v * 100.0] for g, v in series]
+        for name, series in history.items()
+        if series
+    }
+
+    all_values = [v for series in scaled.values() for _, v in series]
+    y_min = min(all_values)
+    y_max = max(all_values)
+
+    if y_max - y_min < 1e-6:
+        y_min -= 1.0
+        y_max += 1.0
+    else:
+        pad = (y_max - y_min) * 0.1
+        y_min -= pad
+        y_max += pad
+
+    # Layout
+    left_pad, right_pad, top_pad, bottom_pad = 8, 8, 8, 8
+    inner_w = max(width - left_pad - right_pad, 1)
+    inner_h = max(height - top_pad - bottom_pad, 1)
+
+    def sx(x):
+        return left_pad + inner_w * (x / x_max)
+
+    def sy(y):
+        return top_pad + inner_h * (1.0 - (y - y_min) / (y_max - y_min))
+
+    colors = [
+        "#4e79a7",
+        "#f28e2b",
+        "#e15759",
+        "#76b7b2",
+        "#59a14f",
+        "#edc948",
+        "#b07aa1",
+        "#ff9da7",
+        "#9c755f",
+        "#bab0ac",
+    ]
+
+    paths = []
+    plotted = []
+
+    for idx, (name, series) in enumerate(scaled.items()):
+        if len(series) < 2:
+            continue  # nothing to draw
+
+        pts = [(round(sx(g), 2), round(sy(v), 2)) for g, v in series]
+
+        plotted.append(
+            {
+                "name": name,
+                "values": [{"games": g, "value": round(v, 2)} for g, v in series],
+            }
+        )
+
+        color = colors[idx % len(colors)]
+        paths.append(
+            '<polyline class="spsa-path" stroke="%s" points="%s">'
+            "<title>%s</title>"
+            "</polyline>" % (color, " ".join("%.2f,%.2f" % p for p in pts), name)
+        )
+
+    # Grid
+    y_mid = (y_min + y_max) / 2.0
+    x_mid = x_max / 2.0
+
+    grid = []
+    for val in [y_max, y_mid, y_min]:
+        y = sy(val)
+        grid.append(
+            '<line class="spsa-grid-line" x1="%d" y1="%.2f" x2="%d" y2="%.2f"></line>'
+            % (left_pad, y, width - right_pad, y)
+        )
+
+    x = sx(x_mid)
+    grid.append(
+        '<line class="spsa-grid-line" x1="%.2f" y1="%d" x2="%.2f" y2="%d"></line>'
+        % (x, top_pad, x, height - bottom_pad)
+    )
+
+    history_json = html.escape(json.dumps({"series": plotted}, separators=(",", ":")))
+
+    svg = """
+    <div class="spsa-history-widget" data-history="{history_json}">
+        <div class="spsa-history-chart">
+            <div class="spsa-history-yaxis">
+                <div>{y_max:.1f}%</div>
+                <div>{y_mid:.1f}%</div>
+                <div>{y_min:.1f}%</div>
+            </div>
+            <div class="spsa-history-main">
+                <div class="spsa-history-plot">
+                    <svg class="spsa-history-graph" viewBox="0 0 {width} {height}" width="{width}" height="{height}">
+                        <rect class="spsa-bg" x="0" y="0" width="{width}" height="{height}" rx="6"></rect>
+                        {grid}
+                        {paths}
+                    </svg>
+                    <div class="spsa-history-tooltip"></div>
+                </div>
+                <div class="spsa-history-xaxis">
+                    <div>0</div>
+                    <div>{x_mid}</div>
+                    <div>{x_max} g</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    """.format(
+        width=width,
+        height=height,
+        history_json=history_json,
+        grid="".join(grid),
+        paths="".join(paths),
+        y_min=y_min,
+        y_mid=y_mid,
+        y_max=y_max,
+        x_mid=int(round(x_mid)),
+        x_max=int(x_max),
+    )
+
+    return mark_safe(svg)
+
+
 register = django.template.Library()
 register.filter("oneDigitPrecision", oneDigitPrecision)
 register.filter("twoDigitPrecision", twoDigitPrecision)
@@ -524,6 +664,7 @@ register.filter("compilerBlock", compilerBlock)
 register.filter("removePrefix", removePrefix)
 register.filter("machine_name", machine_name)
 register.filter("llr_history_graph", llr_history_graph)
+register.filter("spsa_history_graph", spsa_history_graph)
 
 
 def book_download_link(workload):

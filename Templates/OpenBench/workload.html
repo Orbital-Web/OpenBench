@@ -122,23 +122,18 @@
                 });
             }
 
-            function ensureLlrHistoryWidget() {
-                var existing = document.querySelector('.llr-history-widget');
-                if (existing) {
-                    initializeLlrHistoryWidget(existing);
-                    return Promise.resolve(existing);
-                }
-
-                var container = document.getElementById('llr-history-container');
+            function ensureHistoryWidget(container) {
                 if (!container || !container.dataset.historyUrl) {
                     return Promise.resolve(null);
                 }
 
-                if (llrHistoryRequest) {
-                    return llrHistoryRequest;
+                if (container.dataset.loading === 'true') {
+                    return Promise.resolve(null);
                 }
 
-                llrHistoryRequest = fetch(container.dataset.historyUrl, {
+                container.dataset.loading = 'true';
+
+                return fetch(container.dataset.historyUrl, {
                     credentials: 'same-origin'
                 }).then(function(response) {
                     if (!response.ok) {
@@ -149,44 +144,48 @@
                 }).then(function(markup) {
                     container.innerHTML = markup;
                     container.removeAttribute('data-history-url');
+                    container.dataset.loading = 'false';
 
-                    var widget = container.querySelector('.llr-history-widget');
-                    initializeLlrHistoryWidget(widget);
-                    llrHistoryRequest = null;
-                    return widget;
+                    // Only initialize LLR widgets (SPSA has no JS)
+                    var llrWidget = container.querySelector('.llr-history-widget');
+                    if (llrWidget) {
+                        initializeLlrHistoryWidget(llrWidget);
+                    }
+
+                    return container;
                 }).catch(function() {
                     container.innerHTML = '<div class="llr-history-placeholder llr-history-placeholder-error">Unable to load history graph.</div>';
-                    llrHistoryRequest = null;
+                    container.dataset.loading = 'false';
                     return null;
                 });
-
-                return llrHistoryRequest;
             }
 
-            function queueLlrHistoryWidgetLoad() {
-                var container = document.getElementById('llr-history-container');
-                if (!container || !container.dataset.historyUrl) return;
+            function queueHistoryWidgetLoad() {
+                var containers = document.querySelectorAll('[data-history-url]');
+                if (!containers.length) return;
 
-                function requestGraphAfterPaint() {
+                function requestAfterPaint() {
                     window.requestAnimationFrame(function() {
                         window.requestAnimationFrame(function() {
                             setTimeout(function() {
-                                ensureLlrHistoryWidget();
+                                containers.forEach(function(container) {
+                                    ensureHistoryWidget(container);
+                                });
                             }, 250);
                         });
                     });
                 }
 
                 if (document.readyState === 'complete') {
-                    requestGraphAfterPaint();
+                    requestAfterPaint();
                     return;
                 }
 
-                window.addEventListener('load', requestGraphAfterPaint, { once: true });
+                window.addEventListener('load', requestAfterPaint, { once: true });
             }
 
             initializeLlrHistoryWidgets(document);
-            queueLlrHistoryWidgetLoad();
+            queueHistoryWidgetLoad();
         });
     </script>
 
@@ -390,6 +389,29 @@
                                 <div class="llr-history-placeholder">Loading history graph...</div>
                             </div>
                             <div class="llr-history-xaxis">
+                                <div>0</div>
+                                <div></div>
+                                <div>{{workload.games}} g</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% elif type == "TUNE" %}
+            <div class="spsa-history-panel" title="SPSA parameter history">
+                <div class="spsa-history-label">SPSA History</div>
+                <div id="spsa-history-container" class="spsa-history-loader" data-history-url="{{spsa_history_endpoint}}">
+                    <div class="spsa-history-chart">
+                        <div class="spsa-history-yaxis">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <div class="spsa-history-main">
+                            <div class="spsa-history-plot">
+                                <div class="spsa-history-placeholder">Loading history graph...</div>
+                            </div>
+                            <div class="spsa-history-xaxis">
                                 <div>0</div>
                                 <div></div>
                                 <div>{{workload.games}} g</div>

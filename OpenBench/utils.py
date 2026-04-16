@@ -44,6 +44,7 @@ from OpenBench.stats import PentanomialSPRT, TrinomialSPRT
 from OpenSite.settings import MEDIA_ROOT, PROJECT_PATH
 
 LLR_HISTORY_SIZE = 120
+SPSA_HISTORY_SIZE = 120
 
 
 class TimeControl(object):
@@ -161,6 +162,10 @@ def llr_history_path(test_id):
     return os.path.join(MEDIA_ROOT, "llr_history", "%d.json" % (test_id))
 
 
+def spsa_history_path(test_id):
+    return os.path.join(MEDIA_ROOT, "spsa_history", "%d.json" % (test_id))
+
+
 def load_llr_history(test):
     path = llr_history_path(test.id)
     if not os.path.exists(path):
@@ -172,6 +177,22 @@ def load_llr_history(test):
         return history if history else [[0, 0.0]]
     except Exception:
         return [[0, 0.0]]
+
+
+def load_spsa_history(test):
+    path = spsa_history_path(test.id)
+    if os.path.exists(path):
+        try:
+            with open(path) as fin:
+                history = json.load(fin)
+            if history:
+                return history
+        except Exception:
+            pass
+
+    return {
+        param.name: [[0, 0.0]] for param in test.spsa_run.parameters.order_by("index")
+    }
 
 
 def interpolate_llr_history(history, max_points=LLR_HISTORY_SIZE):
@@ -233,6 +254,10 @@ def interpolate_llr_history(history, max_points=LLR_HISTORY_SIZE):
 
 def get_llr_history(test, max_points=LLR_HISTORY_SIZE):
     return interpolate_llr_history(load_llr_history(test), max_points=max_points)
+
+
+def get_spsa_history(test):
+    return load_spsa_history(test)
 
 
 def extract_option(options, option):
@@ -650,6 +675,8 @@ def update_test(request, machine):
                 test.games >= 2 * test.spsa_run.pairs_per * test.spsa_run.iterations
             )
 
+            record_spsa_history(test)
+
         elif test.test_mode == "DATAGEN":
 
             # Finished, and always passing, for a completed DATAGEN Workload
@@ -687,7 +714,7 @@ def update_test(request, machine):
     return [{}, {"stop": True}][test.finished]
 
 
-def downsample_history(history, target_size=LLR_HISTORY_SIZE):
+def downsample_history(history, target_size):
     N = len(history)
     if N <= target_size:
         return history
@@ -733,6 +760,33 @@ def record_llr_history(test):
         history = downsample_history(history, LLR_HISTORY_SIZE)
 
     path = llr_history_path(test.id)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as fout:
+        json.dump(history, fout)
+
+
+def record_spsa_history(test):
+    history = load_spsa_history(test)
+
+    for param in test.spsa_run.parameters.order_by("index"):
+        history.setdefault(param.name, [[0, 0.0]])
+        if test.games <= history[param.name][-1][0]:
+            continue
+
+        denom = param.max_value - param.min_value
+        history[param.name].append(
+            [
+                test.games,
+                (param.value - param.start) / denom if denom != 0.0 else 0.0,
+            ]
+        )
+
+        if len(history[param.name]) >= SPSA_HISTORY_SIZE * 2:
+            history[param.name] = downsample_history(
+                history[param.name], SPSA_HISTORY_SIZE
+            )
+
+    path = spsa_history_path(test.id)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as fout:
         json.dump(history, fout)

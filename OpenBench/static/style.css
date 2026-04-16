@@ -314,29 +314,34 @@ body, html, main{
     color: var(--color-font2);
 }
 
-/* LLR History Graph */
+/* LLR/SPSA History Graph */
 
-#content .llr-history-panel {
+#content .llr-history-panel,
+#content .spsa-history-panel {
     margin: 0.5rem 0 0.75rem;
 }
 
-#content .llr-history-loader {
+#content .llr-history-loader,
+#content .spsa-history-loader {
     width: 372px;
 }
 
-#content .llr-history-widget {
+#content .llr-history-widget,
+#content .spsa-history-widget {
     position: relative;
     z-index: 0;
     width: 372px;
 }
 
-#content .llr-history-chart {
+#content .llr-history-chart,
+#content .spsa-history-chart {
     display: flex;
     align-items: stretch;
     gap: 0.55rem;
 }
 
-#content .llr-history-yaxis {
+#content .llr-history-yaxis,
+#content .spsa-history-yaxis {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -347,13 +352,15 @@ body, html, main{
     text-align: right;
 }
 
-#content .llr-history-main {
+#content .llr-history-main,
+#content .spsa-history-main {
     display: flex;
     flex-direction: column;
     gap: 0.28rem;
 }
 
-#content .llr-history-plot {
+#content .llr-history-plot,
+#content .spsa-history-plot {
     position: relative;
     z-index: 0;
 }
@@ -372,11 +379,26 @@ body, html, main{
     letter-spacing: 0.02em;
 }
 
+#content .spsa-history-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #4C566A;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #242933 0%, #2C3440 100%);
+    width: 320px;
+    height: 300px;
+    color: #A7B1C2;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+}
+
 #content .llr-history-placeholder-error {
     color: #E07A7A;
 }
 
-#content .llr-history-label {
+#content .llr-history-label,
+#content .spsa-history-label {
     margin-bottom: 0.2rem;
     color: var(--color-font3);
     font-size: 0.85rem;
@@ -388,13 +410,21 @@ body, html, main{
     height: 112px;
 }
 
-#content .llr-history-graph .llr-bg {
+#content .spsa-history-graph {
+    display: block;
+    width: 320px;
+    height: 300px;
+}
+
+#content .llr-history-graph .llr-bg,
+#content .spsa-history-graph .spsa-bg {
     fill: #242933;
     stroke: #4C566A;
     stroke-width: 1;
 }
 
-#content .llr-history-graph .llr-grid-line {
+#content .llr-history-graph .llr-grid-line,
+#content .spsa-history-graph .spsa-grid-line {
     stroke: rgba(236, 239, 244, 0.14);
     stroke-width: 1;
 }
@@ -413,11 +443,17 @@ body, html, main{
 }
 
 #content .llr-history-graph .llr-path-positive,
-#content .llr-history-graph .llr-path-negative {
+#content .llr-history-graph .llr-path-negative,
+#content .spsa-history-graph .spsa-path {
     fill: none;
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke-width: 2;
+    stroke-width: 1.5;
+}
+
+#content .spsa-history-graph .spsa-path:hover {
+    stroke-opacity: 0.6;
+    stroke-width: 8;
 }
 
 #content .llr-history-graph .llr-path-positive {
@@ -428,7 +464,8 @@ body, html, main{
     stroke: #E07A7A;
 }
 
-#content .llr-history-xaxis {
+#content .llr-history-xaxis,
+#content .spsa-history-xaxis {
     display: flex;
     justify-content: space-between;
     padding: 0 0.2rem;

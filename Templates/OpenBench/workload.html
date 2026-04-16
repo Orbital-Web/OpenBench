@@ -333,7 +333,9 @@
         <!-- Elo, (SPRT/LRR if SPRT, otherwise CONF), Games -->
         {% if type == "TEST" %}
             <pre class="long-statblock" id="long-statblock">{{workload|longStatBlock|linebreaksbr}}</pre>
-            <pre class="long-statblock">{{workload|passRateStatBlock|linebreaksbr}}</pre>
+            {% if workload.test_mode == "SPRT" %}
+                <pre class="long-statblock">{{workload|passRateStatBlock|linebreaksbr}}</pre>
+            {% endif %}
         {% elif type == "TUNE" %}
             <pre class="long-statblock" id="long-statblock">{{workload|shortStatBlock|linebreaksbr}}</pre>
         {% elif type == "DATAGEN" %}

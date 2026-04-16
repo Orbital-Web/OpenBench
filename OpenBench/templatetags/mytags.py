@@ -170,10 +170,12 @@ def passRateStatBlock(test):
     assert test.test_mode == "SPRT"
 
     pairs = test.games // 2
-    draw_ratio = test.DD / pairs if pairs else 0.49
+    draw_ratio = test.DD / pairs if pairs >= 100 else 0.49
     rms_bias = 191
     rms_bias_score = 1 / (1 + math.pow(10, -rms_bias / 400))
     variance = 1 - draw_ratio - 4 * math.pow(rms_bias_score - 0.5, 2)
+    if variance <= 0:
+        variance = 1 - 0.49 - 4 * math.pow(rms_bias_score - 0.5, 2)
 
     C = 800 / math.log(10)
     t_lower = test.elolower / C

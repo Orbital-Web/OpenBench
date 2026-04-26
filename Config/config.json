@@ -30,6 +30,8 @@
 
     "engines" : [
         "Raphael",
+        "Hobbes",
+        "Icarus",
         "Stash",
         "PlentyChess",
         "Prune",
